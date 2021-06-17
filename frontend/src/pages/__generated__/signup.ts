@@ -4,27 +4,27 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: signup
+// GraphQL mutation operation: SignUp
 // ====================================================
 
-export interface signup_signup_user {
+export interface SignUp_signup_user {
   __typename: "User";
   id: number;
   email: string;
   name: string | null;
 }
 
-export interface signup_signup {
+export interface SignUp_signup {
   __typename: "AuthPayload";
-  user: signup_signup_user | null;
+  user: SignUp_signup_user | null;
   token: string | null;
 }
 
-export interface signup {
-  signup: signup_signup | null;
+export interface SignUp {
+  signup: SignUp_signup | null;
 }
 
-export interface signupVariables {
+export interface SignUpVariables {
   name?: string | null;
   email: string;
   password: string;

@@ -6,18 +6,18 @@
 import { PostCreateInput } from "./../../../__generated__/globalTypes";
 
 // ====================================================
-// GraphQL mutation operation: Mutation
+// GraphQL mutation operation: CREATE_MESSAGE
 // ====================================================
 
-export interface CreateMessage_createDraft {
+export interface CREATE_MESSAGE_createDraft {
   __typename: "Post";
   content: string | null;
 }
 
-export interface CreateMessage {
-  createDraft: CreateMessage_createDraft | null;
+export interface CREATE_MESSAGE {
+  createDraft: CREATE_MESSAGE_createDraft | null;
 }
 
-export interface CreateMessageVariables {
+export interface CREATE_MESSAGEVariables {
   createDraftData: PostCreateInput;
 }

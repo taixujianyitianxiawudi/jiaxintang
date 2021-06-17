@@ -3,6 +3,7 @@ CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "isOnline" BOOLEAN NOT NULL DEFAULT false,
     "name" TEXT,
 
     PRIMARY KEY ("id")

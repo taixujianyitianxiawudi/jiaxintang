@@ -1,10 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
 import { isLoggedInVar } from "../cache";
-import Loading from "./loading";
-
-export const LOGIN_USER = gql`
-  mutation signup($name: String $email: String! $password: String!) {
+import Loading from "../components/loading";
+import * as SignUpTypes from "./__generated__/SignUp"
+export const SIGN_UP = gql`
+  mutation SignUp($name: String $email: String! $password: String!) {
     signup(name: $name email: $email password:$password) {
       user {
         id
@@ -16,35 +16,15 @@ export const LOGIN_USER = gql`
   }
 `;
 
-
-// Type Definitions
-// ====================================================
-interface l {
-  signup: ll | null;
-}
-interface ll {
-  __typename: "AuthPayload";
-  token: string | null;
-  user: llu | null;
-}
-interface llu {
-  __typename: "User";
-  id: string | null;
-  email: string | null;
-  name: string | null;
-}
-interface lp {
-  name: string | null,
-  email: string,
-  password: string,
-}
-// ====================================================
 const Signup: React.FC = () => {
-  const [signup, { loading, error }] = useMutation<l,lp>(LOGIN_USER,{
+  const [signup, { loading, error }] = useMutation<
+  SignUpTypes.SignUp,
+  SignUpTypes.SignUpVariables
+  >(SIGN_UP,{
     onCompleted({ signup }) {
       if (signup && signup.user) {
         localStorage.setItem('token', signup.token as string);
-        localStorage.setItem('userId', signup.user.id as string);
+        localStorage.setItem('userId', signup.user.id as unknown as string);
         isLoggedInVar(true);
       }
     }
@@ -61,7 +41,7 @@ const Signup: React.FC = () => {
   );
   return (
     <div>
-      <p>Enter your name, email and password</p>
+      <p>Enter your name, email and password to Signup</p>
       <input 
         placeholder="name"
         type="text"
@@ -80,7 +60,7 @@ const Signup: React.FC = () => {
       <button onClick={()=>signup({variables: {name, email, password}})
         .catch(e=>{return("fuck")})
       }>
-        Login
+        Signup
       </button>
     </div>
   );

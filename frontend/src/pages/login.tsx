@@ -1,8 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
 import { isLoggedInVar } from "../cache";
-import Loading from "./loading";
+import Loading from "../components/loading";
+import Signup from "./signup";
 import * as LoginTypes from './__generated__/Login'
+
 export const LOGIN_USER = gql`
   mutation Login($email: String! $password: String!) {
     login(email: $email password:$password) {
@@ -56,6 +58,7 @@ const Login: React.FC = () => {
       }>
         Login
       </button>
+      <Signup />
     </div>
   );
 };

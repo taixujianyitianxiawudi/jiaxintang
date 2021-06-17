@@ -1,23 +1,21 @@
 import { gql, useMutation } from "@apollo/client";
 import { useRef, useState } from "react"
-import * as T from './__generated__/Mutation';
+import * as CreateMessageTypes from './__generated__/Mutation';
 
+const CREATE_MESSAGE = gql`
+mutation CreateMessage($createDraftData: PostCreateInput!) {
+  createDraft(data: $createDraftData) {
+    content
+  }
+}
+`;
 
 const InputMessage:React.FC = () => {
-
-  const CREATE_MESSAGE = gql`
-    mutation CREATE_MESSAGE($createDraftData: PostCreateInput!) {
-      createDraft(data: $createDraftData) {
-        content
-      }
-    }
-  `;
-  
   const [message, setMessage] = useState('');
   const textRef = useRef<HTMLTextAreaElement>(null);
   const [createMessage] = useMutation<
-    T.Mutation,
-    T.MutationVariables
+    CreateMessageTypes.CreateMessage,
+    CreateMessageTypes.CreateMessageVariables
   >(CREATE_MESSAGE)
   return (
     <div>

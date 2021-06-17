@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client"
 import Logout from "../components/logout"
-import Loading from "./loading"
-import Error from "./error"
+import Loading from "../components/loading"
+import Error from "../components/errors"
 export const MY_PROFILE = gql`
   query MyProfile {
     me {
