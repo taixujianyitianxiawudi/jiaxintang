@@ -11,15 +11,15 @@ This is a fullstack chat app with Graphql and Typescript
 
 ## Frontend
 
-- [**tailwind css**]: A utility-first CSS framework
-- [**Apollo Client**]: Frontend graphql API
-- [**React**]: Frontend framework
-- [**Peerjs**]: Sharing media across browser
+- **tailwind css**: A utility-first CSS framework
+- **Apollo Client**: Frontend graphql API
+- **React**: Frontend framework
+- **Peerjs**: Sharing media across browser
 
 ## Language
 
-- [**Typescript**]: Typescript is a requirement to make frontend and backend development more secured
+- **Typescript**: Typescript is a requirement to make frontend and backend development more secured
 
 ## Database
 
-- [**PostgreSQL**]: Sql storage
+- **PostgreSQL**: Sql storage
