@@ -41,17 +41,35 @@ const Query = objectType({
         })
       },
     })
-    
-    t.list.field('allPosts', {
-      type: 'Post',
+
+    t.nonNull.list.nonNull.field('allRooms', {
+      type: 'Room',
       resolve: (_parent, _args, context: Context) => {
-        return context.prisma.post.findMany({
-          take: -15,
+        return context.prisma.room.findMany({
           orderBy: {
-            createdAt: "asc"
+            currentNumberofUsers: "desc"
           }
         })
-      },
+      }
+    })
+
+    t.nonNull.list.nonNull.field('allRoomstoMe', {
+      type: 'Room',
+      resolve: (_parent, _args, context: Context) => {
+        const userId = getUserId(context)
+        return context.prisma.room.findMany({
+          where: {
+            OR: [{
+              chatwithId: Number(userId) || null, ///other to I
+            }, {
+              ownerId: Number(userId)///I to other room
+            }] 
+          },
+          orderBy: {
+            currentNumberofUsers: "desc"
+          }
+        })
+      }
     })
 
     t.nullable.field('postById', {
@@ -62,6 +80,34 @@ const Query = objectType({
       resolve: (_parent, args, context: Context) => {
         return context.prisma.post.findUnique({
           where: { id: args.id || undefined },
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('chatByRoomId', {
+      type: 'Chat',
+      args: {
+        id: intArg(),
+      },
+      resolve: (_parent, args, context: Context) => {
+        return context.prisma.chat.findMany({
+          where: { roomId: args.id },
+          take: -15,
+          orderBy: {
+            createdAt: "asc"
+          }
+        })
+      },
+    })
+    
+    t.nullable.field('roomById', {
+      type: 'Room',
+      args: {
+        id: intArg(),
+      },
+      resolve: (_parent, args, context: Context) => {
+        return context.prisma.room.findUnique({
+          where: { id: args.id || undefined }
         })
       },
     })
@@ -198,6 +244,68 @@ const Mutation = objectType({
       },
     })
 
+    t.field('createChat', {
+      type: 'Chat',
+      args: {
+        data: nonNull(
+          arg({
+            type: 'CreateChatInput',
+          }),
+        ),
+      },
+      resolve: (_, args, context: Context) => {
+        const userId = getUserId(context)
+        return context.prisma.chat.create({
+          data: {
+            roomId: args.data.roomId,
+            authorId: userId,
+            content: args.data.content,
+          },
+        })
+      },
+    })
+    
+    t.field('createRoom', {
+      type: 'Room',
+      args: {
+        data: nonNull(
+          arg({
+            type: 'RoomCreateInput',
+          }),
+        ),
+      },
+      resolve: (_, args, context: Context) => {
+        const userId = getUserId(context)
+        return context.prisma.room.create({
+          data: {
+            name: args.data.name,
+            details: args.data.details,
+            ownerId: userId,
+          }
+        })
+      }
+    })
+
+    t.field('createRoomwithUser', {
+      type: 'Room',
+      args: {
+        data: nonNull(
+          arg({
+            type: 'WithUserRoomCreateInput'
+          })
+        )
+      },
+      resolve: (_, args, context: Context) => {
+        return context.prisma.room.create({
+          data: {
+            name: args.data.name,
+            details: args.data.details,
+            chatwithId: args.data.chatwithId,
+          }
+        })
+      }
+    })
+
     t.field('togglePublishPost', {
       type: 'Post',
       args: {
@@ -223,30 +331,47 @@ const Mutation = objectType({
       },
     })
 
-    t.field('incrementPostViewCount', {
-      type: 'Post',
+    t.field('incrementRoomUser', {
+      type: 'Room',
       args: {
         id: nonNull(intArg()),
       },
       resolve: (_, args, context: Context) => {
-        return context.prisma.post.update({
+        return context.prisma.room.update({
           where: { id: args.id || undefined },
           data: {
-            viewCount: {
+            currentNumberofUsers: {
               increment: 1,
             },
           },
         })
       },
     })
-
-    t.field('deletePost', {
-      type: 'Post',
+    
+    t.field('decrementRoomUser', {
+      type: 'Room',
       args: {
         id: nonNull(intArg()),
       },
       resolve: (_, args, context: Context) => {
-        return context.prisma.post.delete({
+        return context.prisma.room.update({
+          where: { id: args.id || undefined },
+          data: {
+            currentNumberofUsers: {
+              decrement: 1,
+            },
+          },
+        })
+      },
+    })
+
+    t.field('deleteRoom', {
+      type: 'Room',
+      args: {
+        id: nonNull(intArg()),
+      },
+      resolve: (_, args, context: Context) => {
+        return context.prisma.room.delete({
           where: { id: args.id },
         })
       },
@@ -270,6 +395,26 @@ const User = objectType({
             where: { id: parent.id || undefined },
           })
           .posts()
+      },
+    })
+    t.nonNull.list.nonNull.field('rooms', {
+      type: 'Room',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.user
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .rooms()
+      },
+    })
+    t.nonNull.list.nonNull.field('chats', {
+      type: 'Chat',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.user
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .chats()
       },
     })
   },
@@ -296,6 +441,77 @@ const Post = objectType({
       },
     })
   },
+})
+
+const Chat = objectType({
+  name: 'Chat',
+  definition(t) {
+    t.nonNull.int('id')
+    t.nonNull.field('createdAt', { type: 'DateTime' })
+    t.string('content')
+    t.nonNull.boolean('viewed')
+    t.field('room', {
+      type: 'Room',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.chat
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .room()
+      },
+    })
+    t.field('author', {
+      type: 'User',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.chat
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .author()
+      },
+    })
+  }
+})
+
+const Room = objectType({
+  name: 'Room',
+  definition(t) {
+    t.nonNull.int('id')
+    t.nonNull.field('createdAt', { type: 'DateTime'})
+    t.nonNull.string('name')
+    t.string('details')
+    t.nonNull.int('currentNumberofUsers')
+    t.nonNull.list.nonNull.field('chats', {
+      type: 'Chat',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.room
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .chats()
+      },
+    })
+    t.field('owner', {
+      type: 'User',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.room
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .owner()
+      }
+    })
+    t.field('chatwith',{
+      type: 'User',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.room
+        .findUnique({
+          where: { id: parent.id || undefined },
+        })
+        .chatwith()
+      }
+    })
+  }
 })
 
 const SortOrder = enumType({
@@ -326,6 +542,31 @@ const PostCreateInput = inputObjectType({
   },
 })
 
+const RoomCreateInput = inputObjectType({
+  name: 'RoomCreateInput',
+  definition(t) {
+    t.nonNull.string('name')
+    t.string('details')
+  },
+})
+
+const CreateChatInput = inputObjectType({
+  name: 'CreateChatInput',
+  definition(t) {
+    t.nonNull.int('roomId')
+    t.string('content')
+  }
+})
+
+const WithUserRoomCreateInput = inputObjectType({
+  name: 'WithUserRoomCreateInput',
+  definition(t) {
+    t.int('chatwithId')
+    t.nonNull.string('name')
+    t.string('details')
+  }
+})
+
 const UserCreateInput = inputObjectType({
   name: 'UserCreateInput',
   definition(t) {
@@ -349,10 +590,15 @@ const schemaWithoutPermissions = makeSchema({
     Mutation,
     Post,
     User,
+    Room,
+    Chat,
     AuthPayload,
     UserUniqueInput,
     UserCreateInput,
     PostCreateInput,
+    RoomCreateInput,
+    CreateChatInput,
+    WithUserRoomCreateInput,
     SortOrder,
     PostOrderByUpdatedAtInput,
     DateTime,

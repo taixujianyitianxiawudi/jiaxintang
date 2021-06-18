@@ -21,5 +21,5 @@ export interface ChatHistory_allPosts {
 }
 
 export interface ChatHistory {
-  allPosts: (ChatHistory_allPosts | null)[] | null;
+  allPosts: ChatHistory_allPosts[];
 }

@@ -6,31 +6,31 @@
 import { WithUserRoomCreateInput } from "./../../../__generated__/globalTypes";
 
 // ====================================================
-// GraphQL mutation operation: Mutation
+// GraphQL mutation operation: CreateRoomWithUser
 // ====================================================
 
-export interface Mutation_createRoomwithUser_chatwith {
+export interface CreateRoomWithUser_createRoomwithUser_chatwith {
   __typename: "User";
   name: string | null;
 }
 
-export interface Mutation_createRoomwithUser_owner {
+export interface CreateRoomWithUser_createRoomwithUser_owner {
   __typename: "User";
   name: string | null;
 }
 
-export interface Mutation_createRoomwithUser {
+export interface CreateRoomWithUser_createRoomwithUser {
   __typename: "Room";
   id: number;
   name: string;
-  chatwith: Mutation_createRoomwithUser_chatwith | null;
-  owner: Mutation_createRoomwithUser_owner | null;
+  chatwith: CreateRoomWithUser_createRoomwithUser_chatwith | null;
+  owner: CreateRoomWithUser_createRoomwithUser_owner | null;
 }
 
-export interface Mutation {
-  createRoomwithUser: Mutation_createRoomwithUser | null;
+export interface CreateRoomWithUser {
+  createRoomwithUser: CreateRoomWithUser_createRoomwithUser | null;
 }
 
-export interface MutationVariables {
+export interface CreateRoomWithUserVariables {
   createRoomwithUserData: WithUserRoomCreateInput;
 }

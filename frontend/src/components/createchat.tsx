@@ -1,31 +1,35 @@
 import { gql, useMutation } from "@apollo/client";
 import { useRef, useState } from "react"
-import * as CreateMessageTypes from './__generated__/Mutation';
+import * as CreateChatTypes from './__generated__/CreateChat';
 
-const CREATE_MESSAGE = gql`
-mutation CreateMessage($createDraftData: PostCreateInput!) {
-  createDraft(data: $createDraftData) {
+const CREATE_CHAT = gql`
+mutation CreateChat($createChatData: CreateChatInput!) {
+  createChat(data: $createChatData) {
+    id
     content
   }
 }
 `;
+interface InputMessageProps {
+  roomId?: any
+}
 
-const InputMessage:React.FC = () => {
-  const [message, setMessage] = useState('');
+const CreateChat: React.FC<InputMessageProps> = ({ roomId }) => {
+  const [chat, setChat] = useState('');
   const textRef = useRef<HTMLTextAreaElement>(null);
-  const [createMessage] = useMutation<
-    CreateMessageTypes.CreateMessage,
-    CreateMessageTypes.CreateMessageVariables
-  >(CREATE_MESSAGE)
+  const [createChat] = useMutation<
+    CreateChatTypes.CreateChat,
+    CreateChatTypes.CreateChatVariables
+  >(CREATE_CHAT)
   return (
     <div>
       <textarea 
         placeholder="type your message"
-        onChange={e=>setMessage(e.target.value)}
+        onChange={e=>setChat(e.target.value)}
         onKeyDown={e => {
           if (e.key === 'Enter' && !e.shiftKey) {
             if (textRef.current !== null) {
-              createMessage({variables: {createDraftData:{title:"asdfa", content:message}}})
+              createChat({variables: {createChatData:{roomId: roomId, content: chat}}})
               .catch(e=>{return("fuck")});
               textRef.current.value = '';
             }
@@ -35,7 +39,7 @@ const InputMessage:React.FC = () => {
       />
       <button onClick={() => {
         if (textRef.current !== null) {
-          createMessage({variables: {createDraftData:{title:"asdfa", content:message}}})
+          createChat({variables: {createChatData:{roomId: roomId, content: chat}}})
           .catch(e=>{return("fuck")});
           textRef.current.value = ''
         }
@@ -46,4 +50,4 @@ const InputMessage:React.FC = () => {
   )
 };
 
-export default InputMessage;
+export default CreateChat;

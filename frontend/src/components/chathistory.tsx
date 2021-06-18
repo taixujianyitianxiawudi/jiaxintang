@@ -1,25 +1,33 @@
 import { gql, useQuery } from "@apollo/client"
 import Loading from "./loading";
 import Errors from "./errors";
-import * as ChatHistoryTypes from './__generated__/ChatHistory'
-export const CHAT_HISTORY = gql`
-  query ChatHistory{
-    allPosts {
+import * as ChatByRoomIdTypes from './__generated__/ChatByRoomId'
+
+export const CHAT_BY_ROOM_ID = gql`
+query ChatByRoomId($chatByRoomIdId: Int) {
+  chatByRoomId(id: $chatByRoomIdId) {
+    id
+    createdAt
+    content
+    author {
+      name
+    }
+    room {
       id
-      content
-      author {
-        name
-      }
-      createdAt
+    }
   }
 }
 `;
+interface RoomProps {
+  roomId?: any;
+}
 
-const ChatHistory: React.FC = () => {
-  //const [id, setId] = useState('')
-  //const [name, setName] = useState('')
-  //const [email, setEmail] = useState('')
-  const { data, loading, error } = useQuery<ChatHistoryTypes.ChatHistory>(CHAT_HISTORY, {
+const ChatByRoomId: React.FC<RoomProps> = ({ roomId }) => {
+  const { data, loading, error } = useQuery<
+    ChatByRoomIdTypes.ChatByRoomId,
+    ChatByRoomIdTypes.ChatByRoomIdVariables
+  >(CHAT_BY_ROOM_ID, {
+    variables: { chatByRoomIdId: roomId },
     pollInterval: 500,
   });
 
@@ -28,10 +36,10 @@ const ChatHistory: React.FC = () => {
   if (data) {
     return (
       <div>
-        {data.allPosts && data.allPosts.map((post) => (
-          <div key={post?.id}>
-            <div>{post?.author?.name}  {post?.createdAt}</div>
-            <div>{post?.content}</div>
+        {data && data.chatByRoomId.map((chat) => (
+          <div key={chat.id}>
+            <div>{chat.author?.name}  {chat.createdAt}</div>
+            <div>{chat.content}</div>
           </div>
         ))}
       </div>
@@ -40,4 +48,4 @@ const ChatHistory: React.FC = () => {
   return <Errors />;
 }
   
-export default ChatHistory;
+export default ChatByRoomId;

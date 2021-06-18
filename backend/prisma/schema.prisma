@@ -14,6 +14,9 @@ model User {
   isOnline Boolean @default(false)
   name     String?
   posts    Post[]
+  rooms    Room[]
+  chats    Chat[]
+  Room     Room[]  @relation("privateTalk")
 }
 
 model Post {
@@ -26,4 +29,28 @@ model Post {
   viewCount Int      @default(0)
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
+}
+
+model Room {
+  id                   Int      @id @default(autoincrement())
+  createdAt            DateTime @default(now())
+  name                 String
+  details              String?
+  currentNumberofUsers Int      @default(0)
+  owner                User?    @relation(fields: [ownerId], references: [id])
+  ownerId              Int?
+  chats                Chat[]
+  chatwith             User?    @relation("privateTalk", fields: [chatwithId], references: [id])
+  chatwithId           Int?
+}
+
+model Chat {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  content   String?
+  viewed    Boolean  @default(false)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  room      Room?    @relation(fields: [roomId], references: [id])
+  roomId    Int?
 }

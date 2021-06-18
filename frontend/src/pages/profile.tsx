@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client"
 import Logout from "../components/logout"
 import Loading from "../components/loading"
 import Error from "../components/errors"
+import * as MyProfileTypes from "./__generated__/MyProfile"
 export const MY_PROFILE = gql`
   query MyProfile {
     me {
@@ -11,21 +12,8 @@ export const MY_PROFILE = gql`
     }
   }
 `
-// Type Definitions
-// ====================================================
-interface m {
-  me: me | null
-}
-interface me {
-  id: string
-  name?: string | null
-  email: string
-}
-
-// ====================================================
-
 const Profile: React.FC = () => {
-  const { data, loading, error } = useQuery<m>(MY_PROFILE);
+  const { data, loading, error } = useQuery<MyProfileTypes.MyProfile>(MY_PROFILE);
   if (loading) return <Loading />
   if (error || data === undefined) return <Error />
   if (data.me) {

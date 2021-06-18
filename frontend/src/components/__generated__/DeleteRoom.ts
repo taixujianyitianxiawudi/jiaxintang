@@ -4,16 +4,18 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: UserList
+// GraphQL mutation operation: DeleteRoom
 // ====================================================
 
-export interface UserList_allUsers {
-  __typename: "User";
+export interface DeleteRoom_deleteRoom {
+  __typename: "Room";
   id: number;
-  name: string | null;
-  isOnline: boolean;
 }
 
-export interface UserList {
-  allUsers: UserList_allUsers[];
+export interface DeleteRoom {
+  deleteRoom: DeleteRoom_deleteRoom | null;
+}
+
+export interface DeleteRoomVariables {
+  deleteRoomId: number;
 }
