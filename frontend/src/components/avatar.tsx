@@ -1,6 +1,6 @@
-import { MyProfile_me } from '../pages/__generated__/MyProfile'
+import { MyProfile_me } from "../pages/__generated__/MyProfile";
 
-const Avatar:React.FC<MyProfile_me> = ({id, name, email}) => {
+const Avatar: React.FC<MyProfile_me> = ({ id, name, email }) => {
   return (
     <div>
       <p>{id}</p>

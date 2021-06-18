@@ -1,34 +1,33 @@
 import ReactDOM from "react-dom";
-import './index.css'
+import "./index.css";
 import {
   ApolloClient,
   NormalizedCacheObject,
   ApolloProvider,
-  split, 
+  split,
   HttpLink,
-} from '@apollo/client';
-import { cache } from './cache';
-import { typeDefs } from './localauth';
-import IsLoggedIn from './localauth'
-import { getMainDefinition } from '@apollo/client/utilities';
-import { WebSocketLink } from '@apollo/client/link/ws';
-
+} from "@apollo/client";
+import { cache } from "./cache";
+import { typeDefs } from "./localauth";
+import IsLoggedIn from "./localauth";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { WebSocketLink } from "@apollo/client/link/ws";
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: "http://localhost:4000/graphql",
   headers: {
-    authorization: localStorage.getItem('token') || '',
-    'client-name': 'Space Explorer [web]',
-    'client-version': '1.0.0',
+    authorization: localStorage.getItem("token") || "",
+    "client-name": "Space Explorer [web]",
+    "client-version": "1.0.0",
   },
 });
 
 const wsLink = new WebSocketLink({
-  uri: 'ws://localhost:4000/subscriptions',
+  uri: "ws://localhost:4000/subscriptions",
   options: {
     reconnect: true,
-    connectionParams:{ authorization: localStorage.getItem("token") || ''},
-  }
+    connectionParams: { authorization: localStorage.getItem("token") || "" },
+  },
 });
 
 // The split function takes three parameters:
@@ -40,31 +39,29 @@ const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
     return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription"
     );
   },
   wsLink,
-  httpLink,
+  httpLink
 );
-
 
 const client: ApolloClient<NormalizedCacheObject> = new ApolloClient({
   headers: {
-    authorization: localStorage.getItem('token') || '',
-    'client-name': 'Space Explorer [web]',
-    'client-version': '1.0.0',
+    authorization: localStorage.getItem("token") || "",
+    "client-name": "Space Explorer [web]",
+    "client-version": "1.0.0",
   },
   cache,
-  uri: 'http://localhost:4000/graphql',
+  uri: "http://localhost:4000/graphql",
   typeDefs: typeDefs,
   link: splitLink,
-})
-
+});
 
 ReactDOM.render(
   <ApolloProvider client={client}>
     <IsLoggedIn />
   </ApolloProvider>,
-document.getElementById('root'),
-)
+  document.getElementById("root")
+);

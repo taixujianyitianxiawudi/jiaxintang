@@ -47,41 +47,10 @@ const Query = objectType({
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.room.findMany({
           orderBy: {
-            currentNumberofUsers: "desc"
+            id: "desc"
           }
         })
       }
-    })
-
-    t.nonNull.list.nonNull.field('allRoomstoMe', {
-      type: 'Room',
-      resolve: (_parent, _args, context: Context) => {
-        const userId = getUserId(context)
-        return context.prisma.room.findMany({
-          where: {
-            OR: [{
-              chatwithId: Number(userId) || null, ///other to I
-            }, {
-              ownerId: Number(userId)///I to other room
-            }] 
-          },
-          orderBy: {
-            currentNumberofUsers: "desc"
-          }
-        })
-      }
-    })
-
-    t.nullable.field('postById', {
-      type: 'Post',
-      args: {
-        id: intArg(),
-      },
-      resolve: (_parent, args, context: Context) => {
-        return context.prisma.post.findUnique({
-          where: { id: args.id || undefined },
-        })
-      },
     })
 
     t.nonNull.list.nonNull.field('chatByRoomId', {
@@ -109,63 +78,6 @@ const Query = objectType({
         return context.prisma.room.findUnique({
           where: { id: args.id || undefined }
         })
-      },
-    })
-
-    t.nonNull.list.nonNull.field('feed', {
-      type: 'Post',
-      args: {
-        searchString: stringArg(),
-        skip: intArg(),
-        take: intArg(),
-        orderBy: arg({
-          type: 'PostOrderByUpdatedAtInput',
-        }),
-      },
-      resolve: (_parent, args, context: Context) => {
-        const or = args.searchString
-          ? {
-            OR: [
-              { title: { contains: args.searchString } },
-              { content: { contains: args.searchString } },
-            ],
-          }
-          : {}
-
-        return context.prisma.post.findMany({
-          where: {
-            published: true,
-            ...or,
-          },
-          take: args.take || undefined,
-          skip: args.skip || undefined,
-          orderBy: args.orderBy || undefined,
-        })
-      },
-    })
-
-    t.list.field('draftsByUser', {
-      type: 'Post',
-      args: {
-        userUniqueInput: nonNull(
-          arg({
-            type: 'UserUniqueInput',
-          }),
-        ),
-      },
-      resolve: (_parent, args, context: Context) => {
-        return context.prisma.user
-          .findUnique({
-            where: {
-              id: args.userUniqueInput.id || undefined,
-              email: args.userUniqueInput.email || undefined,
-            },
-          })
-          .posts({
-            where: {
-              published: false,
-            },
-          })
       },
     })
   },
@@ -223,27 +135,6 @@ const Mutation = objectType({
       },
     })
 
-    t.field('createDraft', {
-      type: 'Post',
-      args: {
-        data: nonNull(
-          arg({
-            type: 'PostCreateInput',
-          }),
-        ),
-      },
-      resolve: (_, args, context: Context) => {
-        const userId = getUserId(context)
-        return context.prisma.post.create({
-          data: {
-            title: args.data.title,
-            content: args.data.content,
-            authorId: userId,
-          },
-        })
-      },
-    })
-
     t.field('createChat', {
       type: 'Chat',
       args: {
@@ -284,51 +175,6 @@ const Mutation = objectType({
           }
         })
       }
-    })
-
-    t.field('createRoomwithUser', {
-      type: 'Room',
-      args: {
-        data: nonNull(
-          arg({
-            type: 'WithUserRoomCreateInput'
-          })
-        )
-      },
-      resolve: (_, args, context: Context) => {
-        return context.prisma.room.create({
-          data: {
-            name: args.data.name,
-            details: args.data.details,
-            chatwithId: args.data.chatwithId,
-          }
-        })
-      }
-    })
-
-    t.field('togglePublishPost', {
-      type: 'Post',
-      args: {
-        id: nonNull(intArg()),
-      },
-      resolve: async (_, args, context: Context) => {
-        try {
-          const post = await context.prisma.post.findUnique({
-            where: { id: args.id || undefined },
-            select: {
-              published: true,
-            },
-          })
-          return context.prisma.post.update({
-            where: { id: args.id || undefined },
-            data: { published: !post?.published },
-          })
-        } catch (e) {
-          throw new Error(
-            `Post with ID ${args.id} does not exist in the database.`,
-          )
-        }
-      },
     })
 
     t.field('incrementRoomUser', {
@@ -387,16 +233,6 @@ const User = objectType({
     t.string('name')
     t.nonNull.string('email')
     t.nonNull.boolean('isOnline')
-    t.nonNull.list.nonNull.field('posts', {
-      type: 'Post',
-      resolve: (parent, _, context: Context) => {
-        return context.prisma.user
-          .findUnique({
-            where: { id: parent.id || undefined },
-          })
-          .posts()
-      },
-    })
     t.nonNull.list.nonNull.field('rooms', {
       type: 'Room',
       resolve: (parent, _, context: Context) => {
@@ -415,29 +251,6 @@ const User = objectType({
             where: { id: parent.id || undefined },
           })
           .chats()
-      },
-    })
-  },
-})
-
-const Post = objectType({
-  name: 'Post',
-  definition(t) {
-    t.nonNull.int('id')
-    t.nonNull.field('createdAt', { type: 'DateTime' })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
-    t.nonNull.string('title')
-    t.string('content')
-    t.nonNull.boolean('published')
-    t.nonNull.int('viewCount')
-    t.field('author', {
-      type: 'User',
-      resolve: (parent, _, context: Context) => {
-        return context.prisma.post
-          .findUnique({
-            where: { id: parent.id || undefined },
-          })
-          .author()
       },
     })
   },
@@ -480,6 +293,7 @@ const Room = objectType({
     t.nonNull.field('createdAt', { type: 'DateTime'})
     t.nonNull.string('name')
     t.string('details')
+    t.nonNull.boolean('public')
     t.nonNull.int('currentNumberofUsers')
     t.nonNull.list.nonNull.field('chats', {
       type: 'Chat',
@@ -501,16 +315,6 @@ const Room = objectType({
           .owner()
       }
     })
-    t.field('chatwith',{
-      type: 'User',
-      resolve: (parent, _, context: Context) => {
-        return context.prisma.room
-        .findUnique({
-          where: { id: parent.id || undefined },
-        })
-        .chatwith()
-      }
-    })
   }
 })
 
@@ -519,26 +323,11 @@ const SortOrder = enumType({
   members: ['asc', 'desc'],
 })
 
-const PostOrderByUpdatedAtInput = inputObjectType({
-  name: 'PostOrderByUpdatedAtInput',
-  definition(t) {
-    t.nonNull.field('updatedAt', { type: 'SortOrder' })
-  },
-})
-
 const UserUniqueInput = inputObjectType({
   name: 'UserUniqueInput',
   definition(t) {
     t.int('id')
     t.string('email')
-  },
-})
-
-const PostCreateInput = inputObjectType({
-  name: 'PostCreateInput',
-  definition(t) {
-    t.nonNull.string('title')
-    t.string('content')
   },
 })
 
@@ -558,24 +347,6 @@ const CreateChatInput = inputObjectType({
   }
 })
 
-const WithUserRoomCreateInput = inputObjectType({
-  name: 'WithUserRoomCreateInput',
-  definition(t) {
-    t.int('chatwithId')
-    t.nonNull.string('name')
-    t.string('details')
-  }
-})
-
-const UserCreateInput = inputObjectType({
-  name: 'UserCreateInput',
-  definition(t) {
-    t.nonNull.string('email')
-    t.string('name')
-    t.list.nonNull.field('posts', { type: 'PostCreateInput' })
-  },
-})
-
 const AuthPayload = objectType({
   name: 'AuthPayload',
   definition(t) {
@@ -588,19 +359,14 @@ const schemaWithoutPermissions = makeSchema({
   types: [
     Query,
     Mutation,
-    Post,
     User,
     Room,
     Chat,
     AuthPayload,
     UserUniqueInput,
-    UserCreateInput,
-    PostCreateInput,
     RoomCreateInput,
     CreateChatInput,
-    WithUserRoomCreateInput,
     SortOrder,
-    PostOrderByUpdatedAtInput,
     DateTime,
   ],
   outputs: {

@@ -14,9 +14,10 @@ interface RoomProps {
 }
 
 const JoinRoom: React.FC<RoomProps> = ({ roomId }) => {
-  const [ joinRoom, { loading, error } ] = useMutation<
+  const [ joinRoom ] = useMutation<
   JoinRoomTypes.JoinRoom,
-  JoinRoomTypes.JoinRoomVariables>(JOIN_ROOM);
+  JoinRoomTypes.JoinRoomVariables
+  >(JOIN_ROOM);
 
   return (
     <button

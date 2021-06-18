@@ -4,14 +4,14 @@ export const cache: InMemoryCache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
-        isLoggedIn:{
+        isLoggedIn: {
           read() {
             return isLoggedInVar();
-          }
+          },
         },
-      }
-    }
-  }
-})
+      },
+    },
+  },
+});
 
-export const isLoggedInVar = makeVar<boolean>(!!localStorage.getItem('token'));
+export const isLoggedInVar = makeVar<boolean>(!!localStorage.getItem("token"));
