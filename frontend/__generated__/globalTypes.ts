@@ -15,12 +15,8 @@ export interface CreateChatInput {
 export interface RoomCreateInput {
   name: string;
   details?: string | null;
-}
-
-export interface WithUserRoomCreateInput {
-  chatwithId?: number | null;
-  name: string;
-  details?: string | null;
+  ownerId?: number | null;
+  public: boolean;
 }
 
 //==============================================================

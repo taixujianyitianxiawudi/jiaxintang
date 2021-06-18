@@ -39,7 +39,7 @@ const CreateRoom: React.FC = () => {
         onClick={() => {
           if (nameRef.current !== null) {
             createRoom({
-              variables: { createRoomData: { name, details } },
+              variables: { createRoomData: { name, details, public:true } },
             }).catch((e) => {
               return "fuck";
             });

@@ -23,7 +23,7 @@ const ROOM_LIST = gql`
 
 const RoomList: React.FC = () => {
   const { data, error, loading } = useQuery<RoomListTypes.RoomList>(ROOM_LIST, {
-    pollInterval: 1000,
+    pollInterval: 2000,
   });
   if (loading) return <Loading />;
   if (error || data === undefined) return <Errors />;

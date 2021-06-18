@@ -40,8 +40,10 @@ type Query {
   allRooms: [Room!]!
   allUsers: [User!]!
   chatByRoomId(id: Int): [Chat!]!
+  chatByRoomIdandUser(id: Int, userid: Int): [Chat!]!
   me: User
   roomById(id: Int): Room
+  userPrivateRoom(id: Int): Room
 }
 
 type Room {
@@ -58,6 +60,8 @@ type Room {
 input RoomCreateInput {
   details: String
   name: String!
+  ownerId: Int
+  public: Boolean!
 }
 
 enum SortOrder {

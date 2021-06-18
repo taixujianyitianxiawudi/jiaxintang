@@ -10,20 +10,6 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "Post" (
-    "id" SERIAL NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "title" TEXT NOT NULL,
-    "content" TEXT,
-    "published" BOOLEAN NOT NULL DEFAULT false,
-    "viewCount" INTEGER NOT NULL DEFAULT 0,
-    "authorId" INTEGER,
-
-    PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Room" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -31,7 +17,7 @@ CREATE TABLE "Room" (
     "details" TEXT,
     "currentNumberofUsers" INTEGER NOT NULL DEFAULT 0,
     "ownerId" INTEGER,
-    "chatwithId" INTEGER,
+    "public" BOOLEAN NOT NULL DEFAULT true,
 
     PRIMARY KEY ("id")
 );
@@ -52,13 +38,7 @@ CREATE TABLE "Chat" (
 CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
 
 -- AddForeignKey
-ALTER TABLE "Post" ADD FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Room" ADD FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Room" ADD FOREIGN KEY ("chatwithId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Chat" ADD FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

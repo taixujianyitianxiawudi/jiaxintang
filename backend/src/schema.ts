@@ -30,9 +30,24 @@ const Query = objectType({
       },
     })
 
+    t.field('userPrivateRoom', {
+      type: 'Room',
+      args: {
+        id: intArg(),
+      },
+      resolve: (_parent, args, context: Context) => {
+        return context.prisma.room.findFirst({
+          where: {
+            ownerId: args.id,
+            public: false,
+          },
+        })
+      },
+    })
+
     t.nullable.field('me', {
       type: 'User',
-      resolve: (parent, args, context: Context) => {
+      resolve: (_parent, _args, context: Context) => {
         const userId = getUserId(context)
         return context.prisma.user.findUnique({
           where: {
@@ -46,11 +61,12 @@ const Query = objectType({
       type: 'Room',
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.room.findMany({
+          where: { public: true },
           orderBy: {
-            id: "desc"
-          }
+            id: 'desc',
+          },
         })
-      }
+      },
     })
 
     t.nonNull.list.nonNull.field('chatByRoomId', {
@@ -63,12 +79,41 @@ const Query = objectType({
           where: { roomId: args.id },
           take: -15,
           orderBy: {
-            createdAt: "asc"
-          }
+            createdAt: 'asc',
+          },
         })
       },
     })
-    
+
+    t.nonNull.list.nonNull.field('chatByRoomIdandUser', {
+      type: 'Chat',
+      args: {
+        id: intArg(),
+        userid: intArg(),
+      },
+      resolve: (_parent, args, context: Context) => {
+        const userId = getUserId(context)
+        return context.prisma.chat.findMany({
+          where: {
+            OR: [
+              {
+                roomId: args.id,
+                authorId: args.userid,
+              },
+              {
+                roomId: args.id,
+                authorId: userId,
+              },
+            ],
+          },
+          take: -15,
+          orderBy: {
+            createdAt: 'asc',
+          },
+        })
+      },
+    })
+
     t.nullable.field('roomById', {
       type: 'Room',
       args: {
@@ -76,7 +121,7 @@ const Query = objectType({
       },
       resolve: (_parent, args, context: Context) => {
         return context.prisma.room.findUnique({
-          where: { id: args.id || undefined }
+          where: { id: args.id || undefined },
         })
       },
     })
@@ -95,11 +140,19 @@ const Mutation = objectType({
       },
       resolve: async (_parent, args, context: Context) => {
         const hashedPassword = await hash(args.password, 10)
+
         const user = await context.prisma.user.create({
           data: {
             name: args.name,
             email: args.email,
             password: hashedPassword,
+          },
+        })
+        await context.prisma.room.create({
+          data: {
+            public: false,
+            ownerId: user.id,
+            name: args.name + "'s private room",
           },
         })
         return {
@@ -129,7 +182,7 @@ const Mutation = objectType({
           throw new Error('Invalid password')
         }
         return {
-          token: sign({ userId: user.id}, APP_SECRET),
+          token: sign({ userId: user.id }, APP_SECRET),
           user,
         }
       },
@@ -155,7 +208,7 @@ const Mutation = objectType({
         })
       },
     })
-    
+
     t.field('createRoom', {
       type: 'Room',
       args: {
@@ -172,9 +225,10 @@ const Mutation = objectType({
             name: args.data.name,
             details: args.data.details,
             ownerId: userId,
-          }
+            public: true,
+          },
         })
-      }
+      },
     })
 
     t.field('incrementRoomUser', {
@@ -193,7 +247,7 @@ const Mutation = objectType({
         })
       },
     })
-    
+
     t.field('decrementRoomUser', {
       type: 'Room',
       args: {
@@ -225,7 +279,6 @@ const Mutation = objectType({
   },
 })
 
-
 const User = objectType({
   name: 'User',
   definition(t) {
@@ -238,7 +291,9 @@ const User = objectType({
       resolve: (parent, _, context: Context) => {
         return context.prisma.user
           .findUnique({
-            where: { id: parent.id || undefined },
+            where: {
+              id: parent.id || undefined,
+            },
           })
           .rooms()
       },
@@ -283,14 +338,14 @@ const Chat = objectType({
           .author()
       },
     })
-  }
+  },
 })
 
 const Room = objectType({
   name: 'Room',
   definition(t) {
     t.nonNull.int('id')
-    t.nonNull.field('createdAt', { type: 'DateTime'})
+    t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.string('name')
     t.string('details')
     t.nonNull.boolean('public')
@@ -313,9 +368,9 @@ const Room = objectType({
             where: { id: parent.id || undefined },
           })
           .owner()
-      }
+      },
     })
-  }
+  },
 })
 
 const SortOrder = enumType({
@@ -336,6 +391,8 @@ const RoomCreateInput = inputObjectType({
   definition(t) {
     t.nonNull.string('name')
     t.string('details')
+    t.int('ownerId')
+    t.nonNull.boolean('public')
   },
 })
 
@@ -344,14 +401,14 @@ const CreateChatInput = inputObjectType({
   definition(t) {
     t.nonNull.int('roomId')
     t.string('content')
-  }
+  },
 })
 
 const AuthPayload = objectType({
   name: 'AuthPayload',
   definition(t) {
     t.string('token')
-    t.field('user', { type: 'User'})
+    t.field('user', { type: 'User' })
   },
 })
 

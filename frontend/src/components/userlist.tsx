@@ -2,6 +2,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import Loading from "./loading";
 import Errors from "./errors";
 import * as UserListTypes from "./__generated__/UserList";
+import PrivateRoom from "./privateroom";
 const USER_LIST = gql`
   query UserList {
     allUsers {
@@ -27,6 +28,7 @@ const UserList: React.FC = () => {
               {user.isOnline ? <p>online!</p> : <p>offline</p>}
             </p>
             <button>Chat with {user.name}</button>
+            <PrivateRoom key={user.id} userId={user.id}/>
           </div>
         ))}
       </div>

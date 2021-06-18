@@ -36,7 +36,7 @@ const ChatByRoomId: React.FC<RoomProps> = ({ roomId }) => {
   if (data) {
     return (
       <div>
-        ChatHistory here****************
+        ChatHistory here ID:{roomId}
         {data &&
           data.chatByRoomId.map((chat) => (
             <div key={chat.id}>
