@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import Loading from "./loading";
 import Errors from "./errors";
 import * as UserListTypes from "./__generated__/UserList";

@@ -1,5 +1,3 @@
-import CreateChat from "./createchat"
-import ChatHistory from "./chathistory"
 import { gql, useQuery } from "@apollo/client";
 import * as UserPrivateRoomTypes from './__generated__/UserPrivateRoom'
 import Errors from "./errors";
@@ -24,7 +22,7 @@ const PrivateRoom: React.FC<UserIdProps> = ({ userId }) => {
   });
   if (data && data.userPrivateRoom) {
     return (
-        <Link to={("/chat/" + data.userPrivateRoom.id) as unknown as string}>
+        <Link to={("/chat/private/"+ data.userPrivateRoom.id +"/"+ userId ) as unknown as string}>
         <div>
         <p>This is a chat room~ ID: {data.userPrivateRoom.id} AND USERID:{userId}</p>
         </div>

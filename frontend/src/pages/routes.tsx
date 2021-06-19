@@ -45,13 +45,16 @@ const Routes: React.FC = () => {
           <Route exact path="/">
             
           </Route>
-          <Route path="/profile">
+          <Route exact path="/profile">
             <Profile />
           </Route>
-          <Route path="/signup">
+          <Route exact path="/signup">
             <Signup />
           </Route>
-          <Route path="/chat/:roomId">
+          <Route path="/chat/public/:roomId/:userId" exact >
+            <ChatRoom />
+          </Route>
+          <Route path="/chat/private/:roomId/:userId" exact >
             <ChatRoom />
           </Route>
         </Switch>

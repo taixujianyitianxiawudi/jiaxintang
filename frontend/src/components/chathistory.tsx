@@ -1,55 +1,22 @@
-import { gql, useQuery } from "@apollo/client";
-import Loading from "./loading";
-import Errors from "./errors";
-import * as ChatByRoomIdTypes from "./__generated__/ChatByRoomId";
+import PrivateChatHistory from "./privatechathistory";
+import PublicChatHistory from "./publicchathistory";
 
-export const CHAT_BY_ROOM_ID = gql`
-  query ChatByRoomId($chatByRoomIdId: Int) {
-    chatByRoomId(id: $chatByRoomIdId) {
-      id
-      createdAt
-      content
-      author {
-        name
-      }
-      room {
-        id
-      }
-    }
-  }
-`;
+
 interface RoomProps {
-  roomId?: any;
+  roomId: number;
+  userId?: number;
 }
 
-const ChatByRoomId: React.FC<RoomProps> = ({ roomId }) => {
-  const { data, loading, error } = useQuery<
-    ChatByRoomIdTypes.ChatByRoomId,
-    ChatByRoomIdTypes.ChatByRoomIdVariables
-  >(CHAT_BY_ROOM_ID, {
-    variables: { chatByRoomIdId: roomId },
-    pollInterval: 500,
-  });
-
-  if (loading) return <Loading />;
-  if (error || data === undefined) return <Errors />;
-  if (data) {
+const ChatHistory: React.FC<RoomProps> = ({ roomId, userId }) => {
+  if (userId === 999999) {
+    return <PublicChatHistory roomId={roomId}/>
+  } else {
     return (
-      <div>
-        ChatHistory here ID:{roomId}
-        {data &&
-          data.chatByRoomId.map((chat) => (
-            <div key={chat.id}>
-              <div>
-                {chat.author?.name} {chat.createdAt}
-              </div>
-              <div>{chat.content}</div>
-            </div>
-          ))}
-      </div>
-    );
+      <div>userID: {userId}
+    <PrivateChatHistory roomId={roomId} userId={userId as number}/>
+    </div>
+    )
   }
-  return <Errors />;
 };
 
-export default ChatByRoomId;
+export default ChatHistory;

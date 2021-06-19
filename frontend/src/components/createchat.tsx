@@ -11,7 +11,7 @@ const CREATE_CHAT = gql`
   }
 `;
 interface InputMessageProps {
-  roomId?: any;
+  roomId: number;
 }
 
 const CreateChat: React.FC<InputMessageProps> = ({ roomId }) => {

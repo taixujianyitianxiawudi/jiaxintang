@@ -2,7 +2,6 @@ import { gql, useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 import DeleteRoom from "./deleteroom";
 import Errors from "./errors";
-import JoinRoom from "./joinroom";
 import Loading from "./loading";
 import * as RoomListTypes from "./__generated__/RoomList";
 
@@ -31,7 +30,7 @@ const RoomList: React.FC = () => {
     return (
       <div>
         {data.allRooms.map((room) => (
-          <Link to={("/chat/" + room.id) as unknown as string}>
+          <Link to={("/chat/public/" + room.id + "/999999") as unknown as string}>
             <div className="p-6 max-w-sm bg-white rounded-xl shadow-md flex items-center space-x-4">
               <div className="text-gray-500">{room.id}</div>
               <div className="text-gray-500">{room.name}</div>
@@ -40,7 +39,6 @@ const RoomList: React.FC = () => {
                 this room now have{room.currentNumberofUsers} users
               </div>
               <div className="text-gray-500">owner: {room.owner?.name}</div>
-
               <DeleteRoom key={room.id} roomId={room.id} />
             </div>
           </Link>
