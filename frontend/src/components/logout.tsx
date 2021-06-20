@@ -10,6 +10,7 @@ const Logout = () => {
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       isLoggedInVar(false);
+      window.location.href="/"
     }}>
       log out!
     </button>

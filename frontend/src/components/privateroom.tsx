@@ -23,9 +23,9 @@ const PrivateRoom: React.FC<UserIdProps> = ({ userId }) => {
   if (data && data.userPrivateRoom) {
     return (
         <Link to={("/chat/private/"+ data.userPrivateRoom.id +"/"+ userId ) as unknown as string}>
-        <div>
-        <p>This is a chat room~ ID: {data.userPrivateRoom.id} AND USERID:{userId}</p>
-        </div>
+          <div>
+            CHAT
+          </div>
         </Link>
       );
   }

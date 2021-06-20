@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { isLoggedInVar } from "../cache";
 import Loading from "../components/loading";
 import * as SignUpTypes from "./__generated__/SignUp"
@@ -62,6 +63,9 @@ const Signup: React.FC = () => {
       }>
         Signup
       </button>
+      <Link to="/">
+        click here to login
+      </Link>
     </div>
   );
 };

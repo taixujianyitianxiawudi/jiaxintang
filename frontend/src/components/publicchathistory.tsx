@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import * as ChatByRoomIdTypes from "./__generated__/ChatByRoomId";
 import Errors from "./errors";
 import Loading from "./loading";
+import Avatar from "./avatar";
 
 export const CHAT_BY_ROOM_ID = gql`
   query ChatByRoomId($chatByRoomIdId: Int) {
@@ -11,6 +12,7 @@ export const CHAT_BY_ROOM_ID = gql`
       content
       author {
         name
+        id
       }
       room {
         id
@@ -39,12 +41,13 @@ const PublicChatHistory: React.FC<RoomProps> = ({ roomId }) => {
         ChatHistory here ID:{roomId}
         {data &&
           data.chatByRoomId.map((chat) => (
-            <div key={chat.id}>
-              <div>
-                {chat.author?.name} {chat.createdAt}
-              </div>
-              <div>{chat.content}</div>
-            </div>
+            <Avatar 
+              id={chat.author?.id as number} 
+              key={chat.id} 
+              name={chat.author?.name as string} 
+              createdAt={chat.createdAt} 
+              content={chat.content as string}
+            />
           ))}
       </div>
     );

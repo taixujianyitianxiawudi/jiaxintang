@@ -30,6 +30,7 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId }) => {
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             if (textRef.current !== null) {
+              e.preventDefault();
               createChat({
                 variables: {
                   createChatData: { roomId: roomId, content: chat },
@@ -38,20 +39,21 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId }) => {
                 return "fuck";
               });
               textRef.current.value = "";
+              setChat("");
             }
           }
         }}
         ref={textRef}
       />
       <button
-        onClick={() => {
+        onClick={(e) => {
           if (textRef.current !== null) {
+            e.preventDefault()
             createChat({
               variables: { createChatData: { roomId: roomId, content: chat } },
-            }).catch((e) => {
-              return "fuck";
-            });
+            }).catch();
             textRef.current.value = "";
+            setChat("");
           }
         }}
       >

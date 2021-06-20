@@ -44,7 +44,6 @@ const ChatRoom:React.FC<UserIdProps> = ({ _userId }) => {
   return (
     <div>
       <ChatHistory roomId={parseInt(roomId,10)} userId={parseInt(userId,10)}/>
-      <p>This is a chat room~ ID: {roomId}</p>
       <CreateChat roomId={parseInt(roomId,10)}/>
     </div>
   );

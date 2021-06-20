@@ -1,12 +1,18 @@
-import { MyProfile_me } from "../pages/__generated__/MyProfile";
+interface ChatVariables {
+  id: number,
+  name: string,
+  createdAt: string,
+  image?: string,
+  content?: string
+}
 
-const Avatar: React.FC<MyProfile_me> = ({ id, name, email }) => {
+const Avatar: React.FC<ChatVariables> = ({ id, name, createdAt, image, content }) => {
+  const userId = localStorage.getItem("userId");
+  let color = "text-blue-400";
+  if (id == userId as unknown as number) //if user created this message
+  { color = "text-pink-400"}
   return (
-    <div>
-      <p>{id}</p>
-      <p>{name}</p>
-      <p>{email}</p>
-    </div>
+    <div className={color}>{name}: {content}</div>
   );
 };
 

@@ -27,7 +27,6 @@ const UserList: React.FC = () => {
             <p className="text-gray-500">
               {user.isOnline ? <p>online!</p> : <p>offline</p>}
             </p>
-            <button>Chat with {user.name}</button>
             <PrivateRoom key={user.id} userId={user.id}/>
           </div>
         ))}

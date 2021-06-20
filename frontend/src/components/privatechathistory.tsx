@@ -1,4 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
+import Avatar from "./avatar";
 import Errors from "./errors";
 import Loading from "./loading";
 import * as ChatByRoomIdandUserIdTypes from "./__generated__/ChatByRoomIdandUserId";
@@ -17,6 +18,7 @@ const CHAT_BY_ROOM_ID_AND_USER_ID = gql`
       content
       author {
         name
+        id
       }
     }
   }
@@ -44,15 +46,15 @@ const PrivateChatHistory: React.FC<RoomProps> = ({ roomId, userId }) => {
   if (data) {
     return (
       <div>
-        PRIVATE ChatHistory here ID:{roomId}
         {data &&
           data.chatByRoomIdandUser.map((chat) => (
-            <div key={chat.id}>
-              <div>
-                {chat.author?.name} {chat.createdAt}
-              </div>
-              <div>{chat.content}</div>
-            </div>
+            <Avatar 
+              id={chat.author?.id as number} 
+              key={chat.id} 
+              name={chat.author?.name as string} 
+              createdAt={chat.createdAt} 
+              content={chat.content as string}
+            />
           ))}
       </div>
     );

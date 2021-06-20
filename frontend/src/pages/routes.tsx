@@ -1,11 +1,11 @@
 import Profile from "./profile";
 import React from "react";
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
-import Signup from "./signup";
 import ChatRoom from "./chatroom";
 import RoomList from "../components/roomlist";
 import UserList from "../components/userlist";
 import CreateRoom from "../components/createroom";
+import Logout from "../components/logout";
 
 const Routes: React.FC = () => {
   return (
@@ -20,9 +20,9 @@ const Routes: React.FC = () => {
               <Link to="/profile">Profile</Link>
             </li>
             <li>
-              <Link to="/signup">Signup</Link>
-            </li>
-            <li>
+               <div>
+                <Logout />
+               </div>
               <div>
                 this is a userlist!
                 <UserList />
@@ -47,9 +47,6 @@ const Routes: React.FC = () => {
           </Route>
           <Route exact path="/profile">
             <Profile />
-          </Route>
-          <Route exact path="/signup">
-            <Signup />
           </Route>
           <Route path="/chat/public/:roomId/:userId" exact >
             <ChatRoom />

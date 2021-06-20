@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
+import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import { isLoggedInVar } from "../cache";
 import Loading from "../components/loading";
 import Signup from "./signup";
@@ -41,7 +42,14 @@ const Login: React.FC = () => {
   );
 
   return (
-    <div>
+    <BrowserRouter>
+
+     <Switch>
+      <Route path="/signup">
+        <Signup />
+      </Route>
+      <Route exact path="/">
+      <div>
       <p>Enter your email and password</p>
       <input 
         placeholder="email"
@@ -58,8 +66,13 @@ const Login: React.FC = () => {
       }>
         Login
       </button>
-      <Signup />
+      <Link to="/signup">
+        click here to signup
+      </Link>
     </div>
+      </Route>
+     </Switch>
+    </BrowserRouter>
   );
 };
 export default Login;

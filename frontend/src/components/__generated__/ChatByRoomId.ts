@@ -10,6 +10,7 @@
 export interface ChatByRoomId_chatByRoomId_author {
   __typename: "User";
   name: string | null;
+  id: number;
 }
 
 export interface ChatByRoomId_chatByRoomId_room {

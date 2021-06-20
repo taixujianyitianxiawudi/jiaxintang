@@ -1,12 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
-import * as JoinRoomTypes from './__generated__/JoinRoom'
+import * as JoinRoomTypes from "./__generated__/JoinRoom";
 const JOIN_ROOM = gql`
-mutation JoinRoom($incrementRoomUserId: Int!) {
-  incrementRoomUser(id: $incrementRoomUserId) {
-    id
-    name
+  mutation JoinRoom($incrementRoomUserId: Int!) {
+    incrementRoomUser(id: $incrementRoomUserId) {
+      id
+      name
+    }
   }
-}
 `;
 
 interface RoomProps {
@@ -14,20 +14,20 @@ interface RoomProps {
 }
 
 const JoinRoom: React.FC<RoomProps> = ({ roomId }) => {
-  const [ joinRoom ] = useMutation<
-  JoinRoomTypes.JoinRoom,
-  JoinRoomTypes.JoinRoomVariables
-  >(JOIN_ROOM);
+  const [joinRoom] =
+    useMutation<JoinRoomTypes.JoinRoom, JoinRoomTypes.JoinRoomVariables>(
+      JOIN_ROOM
+    );
 
   return (
     <button
-    onClick={()=>{
-      joinRoom({variables:{incrementRoomUserId: roomId}})
-    }}
+      onClick={() => {
+        joinRoom({ variables: { incrementRoomUserId: roomId } });
+      }}
     >
       Join this room{roomId}
     </button>
-  )
-}
+  );
+};
 
 export default JoinRoom;
