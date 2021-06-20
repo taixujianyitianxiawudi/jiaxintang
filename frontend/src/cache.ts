@@ -9,9 +9,15 @@ export const cache: InMemoryCache = new InMemoryCache({
             return isLoggedInVar();
           },
         },
+        UserOrRoom: {
+          read() {
+            return UserOrRoomVar()
+          }
+        }
       },
     },
   },
 });
 
 export const isLoggedInVar = makeVar<boolean>(!!localStorage.getItem("token"));
+export const UserOrRoomVar = makeVar<boolean>(localStorage.getItem("place")==="true");

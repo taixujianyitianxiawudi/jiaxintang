@@ -1,9 +1,10 @@
 import { gql, useQuery } from '@apollo/client';
-import Routes from './pages/routes'
 import Login from './pages/login';
+import Main from './pages/main';
 export const typeDefs = gql`
   extend type Query {
     isLoggedIn: Boolean!
+    UserOrRoom: Boolean!
   }
 `;
 
@@ -16,6 +17,7 @@ const IS_LOGGED_IN = gql`
 export default function IsLoggedIn() {
   const { data } = useQuery(IS_LOGGED_IN);
   return data.isLoggedIn 
-  ? <Routes /> 
+  ? <Main /> 
   : <div><Login /></div>;
 }
+

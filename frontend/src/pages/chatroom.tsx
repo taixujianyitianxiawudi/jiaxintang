@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 import * as JoinRoomaTypes from './__generated__/JoinRooma'
 import * as LeftRoomaTypes from './__generated__/LeftRooma'
+import { useEffect, useState } from "react";
+
 interface UserIdProps {
   _userId?: any;
 }
@@ -29,18 +31,24 @@ mutation LeftRooma($decrementRoomUserId: Int!) {
 const ChatRoom:React.FC<UserIdProps> = ({ _userId }) => {
   const { roomId, userId } = useParams<{ roomId: string, userId: string }>()
   
-//  const [ leftRoom ] = useMutation<
-//  LeftRoomaTypes.LeftRooma,
-//  LeftRoomaTypes.LeftRoomaVariables
-//  >(LEFT_ROOM);
+  const [ leftRoom ] = useMutation<
+  LeftRoomaTypes.LeftRooma,
+  LeftRoomaTypes.LeftRoomaVariables
+  >(LEFT_ROOM);
 
-//  const [ joinRoom ] = useMutation<
-//  JoinRoomaTypes.JoinRooma,
-//  JoinRoomaTypes.JoinRoomaVariables
-//  >(JOIN_ROOM);
+  const [ joinRoom ] = useMutation<
+  JoinRoomaTypes.JoinRooma,
+  JoinRoomaTypes.JoinRoomaVariables
+  >(JOIN_ROOM);
   
-//  joinRoom({variables:{incrementRoomUserId: parseInt(roomId,10)}})
-//  leftRoom({variables:{decrementRoomUserId: parseInt(roomId,10)}})
+  //joinRoom({variables:{incrementRoomUserId: parseInt(roomId,10)}})
+  //leftRoom({variables:{decrementRoomUserId: parseInt(roomId,10)}})
+  //useEffect(()=> {
+  //  joinRoom({variables:{incrementRoomUserId: parseInt(roomId,10)}})
+  //  return () => {
+  //    leftRoom({variables:{decrementRoomUserId: parseInt(roomId,10)}})
+  //  }
+  //})
   return (
     <div>
       <ChatHistory roomId={parseInt(roomId,10)} userId={parseInt(userId,10)}/>

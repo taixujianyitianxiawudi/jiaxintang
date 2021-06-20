@@ -20,9 +20,9 @@ const UserList: React.FC = () => {
   if (error || data === undefined) return <Errors />;
   if (data) {
     return (
-      <div>
+      <div className="flex-col">
         {data.allUsers.map((user) => (
-          <div className="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4">
+          <div className="p-6 max-w-sm bg-white rounded-xl shadow-md flex items-center space-x-4">
             <p className="text-gray-500">{user.name}</p>
             <p className="text-gray-500">
               {user.isOnline ? <p>online!</p> : <p>offline</p>}

@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useRef, useState } from "react";
+import ChatUtils from "./chatutils/chatutils";
 import * as CreateChatTypes from "./__generated__/CreateChat";
 
 const CREATE_CHAT = gql`
@@ -15,8 +16,10 @@ interface InputMessageProps {
 }
 
 const CreateChat: React.FC<InputMessageProps> = ({ roomId }) => {
+
+  
   const [chat, setChat] = useState("");
-  const textRef = useRef<HTMLTextAreaElement>(null);
+  const chatRef = useRef<HTMLInputElement>(null);
   const [createChat] =
     useMutation<
       CreateChatTypes.CreateChat,
@@ -24,12 +27,13 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId }) => {
     >(CREATE_CHAT);
   return (
     <div>
-      <textarea
+      <ChatUtils chatRef={chatRef} setChat={setChat} />
+      <input
         placeholder="type your message"
         onChange={(e) => setChat(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
-            if (textRef.current !== null) {
+            if (chatRef.current !== null) {
               e.preventDefault();
               createChat({
                 variables: {
@@ -38,21 +42,21 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId }) => {
               }).catch((e) => {
                 return "fuck";
               });
-              textRef.current.value = "";
+              chatRef.current.value = "";
               setChat("");
             }
           }
         }}
-        ref={textRef}
+        ref={chatRef}
       />
       <button
         onClick={(e) => {
-          if (textRef.current !== null) {
+          if (chatRef.current !== null) {
             e.preventDefault()
             createChat({
               variables: { createChatData: { roomId: roomId, content: chat } },
             }).catch();
-            textRef.current.value = "";
+            chatRef.current.value = "";
             setChat("");
           }
         }}

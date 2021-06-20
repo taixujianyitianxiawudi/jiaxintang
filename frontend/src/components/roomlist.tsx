@@ -22,13 +22,13 @@ const ROOM_LIST = gql`
 
 const RoomList: React.FC = () => {
   const { data, error, loading } = useQuery<RoomListTypes.RoomList>(ROOM_LIST, {
-    pollInterval: 2000,
+    pollInterval: 1000,
   });
   if (loading) return <Loading />;
   if (error || data === undefined) return <Errors />;
   if (data) {
     return (
-      <div>
+      <div className="flex-col">
         {data.allRooms.map((room) => (
           <Link to={("/chat/public/" + room.id + "/999999") as unknown as string}>
             <div className="p-6 max-w-sm bg-white rounded-xl shadow-md flex items-center space-x-4">
