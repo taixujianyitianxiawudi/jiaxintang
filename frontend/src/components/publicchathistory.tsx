@@ -32,7 +32,7 @@ const PublicChatHistory: React.FC<RoomProps> = ({ roomId }) => {
     variables: { chatByRoomIdId: roomId },
     pollInterval: 500,
   });
-
+  
   if (loading) return <Loading />;
   if (error || data === undefined) return <Errors />;
   if (data) {
