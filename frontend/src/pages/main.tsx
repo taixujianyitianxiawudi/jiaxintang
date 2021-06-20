@@ -6,24 +6,37 @@ import Routes from "./routes";
 const Main:React.FC = () => {
   return (
     <BrowserRouter>
-    <div>
-
+    <div >
+        <div>
       <Link to="/">
         main  
       </Link>
-
+        </div>
+        <div>
       <Link to="/profile">
         profile  
       </Link>
+      </div>
+
+      <div>
       <Link to="/chat">
         chat  
       </Link>
+      </div>
+
+      <div>
       <Link to="/invitations">
         invitations  
       </Link>
+      </div>
+
+      <div>
       <Link to="/search">
         search  
       </Link>
+      </div>
+
+      <div>
       <Logout />
     </div>
     <div>
@@ -44,6 +57,7 @@ const Main:React.FC = () => {
          <div>search</div>   
         </Route>
       </Switch>
+    </div>
     </div>
     </BrowserRouter>
   )

@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { error } from "console";
 
 import * as DeleteRoomTypes from "./__generated__/DeleteRoom";
 
@@ -23,7 +24,11 @@ const DeleteRoom: React.FC<RoomProps> = ({ roomId }) => {
   return (
     <button
       onClick={() => {
-        deleteRoom({ variables: { deleteRoomId: roomId } });
+        deleteRoom({ variables: { deleteRoomId: roomId } })
+        .then(()=>{
+          window.location.href="/chat";
+          localStorage.removeItem("roomId");
+        }); 
       }}
     >
       Delete room {roomId}

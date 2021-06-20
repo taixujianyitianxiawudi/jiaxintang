@@ -60,10 +60,16 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
     if (localStorage.getItem("roomId") === null) {
       joinRoom({variables:{incrementRoomUserId: roomId}})
       localStorage.setItem("roomId", roomId as unknown as string)
+      const newroomId = parseInt(localStorage.getItem("roomId") as string,10)
+      createChat({
+        variables: {
+          createChatData: { roomId: newroomId, content: "enter the room" },
+        },
+      });
     } else if (oldRoomId !== roomId) {
       joinRoom({variables:{incrementRoomUserId: roomId}}).catch();
       leftRoom({variables:{decrementRoomUserId: oldRoomId}}).catch();
-      localStorage.setItem("roomId", roomId as unknown as string);
+
       if (userId === 999999) {
         createChat({
           variables: {
@@ -71,6 +77,7 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
           },
         });
       }
+      localStorage.setItem("roomId", roomId as unknown as string);
 
     }
 
