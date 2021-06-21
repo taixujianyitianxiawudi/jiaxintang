@@ -1,18 +1,18 @@
 import { gql, useMutation } from "@apollo/client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import ChatUtils from "./chatutils/chatutils";
 import * as CreateChatTypes from "./__generated__/CreateChat";
 import * as JoinRoombTypes from './__generated__/JoinRoomb'
 import * as LeftRoombTypes from './__generated__/LeftRoomb'
-
+import * as CreateChatPrivateTypes from './__generated__/CreateChatPrivateMutation'
 const CREATE_CHAT = gql`
-  mutation CreateChat($createChatData: CreateChatInput!) {
-    createChat(data: $createChatData) {
-      id
-      content
-    }
+mutation CreateChatPrivateMutation($createChatPrivateData: CreateChatInputPrivate!) {
+  createChatPrivate(data: $createChatPrivateData) {
+    id
+    content
   }
-`;
+}
+`
 interface InputMessageProps {
   roomId: number;
   userId?: number;
@@ -42,8 +42,8 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
   const chatRef = useRef<HTMLInputElement>(null);
   const [createChat] =
     useMutation<
-      CreateChatTypes.CreateChat,
-      CreateChatTypes.CreateChatVariables
+    CreateChatPrivateTypes.CreateChatPrivateMutation,
+    CreateChatPrivateTypes.CreateChatPrivateMutationVariables
     >(CREATE_CHAT);
 
     const [ leftRoom ] = useMutation<
@@ -63,7 +63,10 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
       const newroomId = parseInt(localStorage.getItem("roomId") as string,10)
       createChat({
         variables: {
-          createChatData: { roomId: newroomId, content: "enter the room" },
+          createChatPrivateData: {
+            roomId: roomId,
+            content: "enter the room",
+          }
         },
       });
     } else if (oldRoomId !== roomId) {
@@ -71,16 +74,19 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
       leftRoom({variables:{decrementRoomUserId: oldRoomId}}).catch();
 
       if (userId === 999999) {
-        createChat({
+        createChat({  
           variables: {
-            createChatData: { roomId: roomId, content: "enter the room" },
+            createChatPrivateData: {
+              roomId: roomId,
+              content: "enter the room",
+            }
           },
         });
       }
       localStorage.setItem("roomId", roomId as unknown as string);
 
     }
-
+    if (userId === 999999) userId = undefined
   return (
     <div>
       <ChatUtils chatRef={chatRef} setChat={setChat} />
@@ -93,7 +99,11 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
               e.preventDefault();
               createChat({
                 variables: {
-                  createChatData: { roomId: roomId, content: chat },
+                  createChatPrivateData: {
+                    roomId: roomId,
+                    content: chat,
+                    touserId: userId,
+                  }
                 },
               }).catch((e) => {
                 return "fuck";
@@ -110,7 +120,13 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
           if (chatRef.current !== null) {
             e.preventDefault()
             createChat({
-              variables: { createChatData: { roomId: roomId, content: chat } },
+              variables: {
+                createChatPrivateData: {
+                  roomId: roomId,
+                  content: chat,
+                  touserId: userId,
+                }
+              },
             }).catch();
             chatRef.current.value = "";
             setChat("");

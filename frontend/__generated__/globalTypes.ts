@@ -7,9 +7,10 @@
 // START Enums and Input Objects
 //==============================================================
 
-export interface CreateChatInput {
+export interface CreateChatInputPrivate {
   roomId: number;
   content?: string | null;
+  touserId?: number | null;
 }
 
 export interface RoomCreateInput {

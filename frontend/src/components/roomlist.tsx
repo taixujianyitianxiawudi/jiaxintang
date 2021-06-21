@@ -1,11 +1,9 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql ,useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 import DeleteRoom from "./deleteroom";
 import Errors from "./errors";
 import Loading from "./loading";
 import * as RoomListTypes from "./__generated__/RoomList";
-import * as JoinRoomcTypes from './__generated__/JoinRoomc'
-import * as LeftRoomcTypes from './__generated__/LeftRoomc'
 
 const ROOM_LIST = gql`
   query RoomList {
@@ -22,35 +20,7 @@ const ROOM_LIST = gql`
   }
 `;
 
-const JOIN_ROOM = gql`
-mutation JoinRoomc($incrementRoomUserId: Int!) {
-  incrementRoomUser(id: $incrementRoomUserId) {
-    id
-    name
-  }
-}
-`;
-
-const LEFT_ROOM = gql`
-mutation LeftRoomc($decrementRoomUserId: Int!) {
-  decrementRoomUser(id: $decrementRoomUserId) {
-    id
-    name
-  }
-}
-`;
-
 const RoomList: React.FC = () => {
-  const [ leftRoom ] = useMutation<
-  LeftRoomcTypes.LeftRoomc,
-  LeftRoomcTypes.LeftRoomcVariables
-  >(LEFT_ROOM);
-
-  const [ joinRoom ] = useMutation<
-  JoinRoomcTypes.JoinRoomc,
-  JoinRoomcTypes.JoinRoomcVariables
-  >(JOIN_ROOM);
-
   const { data, error, loading } = useQuery<RoomListTypes.RoomList>(ROOM_LIST, {
     pollInterval: 1000,
   });

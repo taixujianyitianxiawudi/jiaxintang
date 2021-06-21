@@ -4,7 +4,6 @@ import ChatRoom from "./chatroom";
 import RoomList from "../components/roomlist";
 import UserList from "../components/userlist";
 import CreateRoom from "../components/createroom";
-import { useState } from "react";
 import { UserOrRoomVar } from "../cache";
 import { gql, useQuery } from "@apollo/client";
 

@@ -15,6 +15,7 @@ model User {
   name     String?
   rooms    Room[]
   chats    Chat[]
+  getchated     Chat[]  @relation("touser")
 }
 
 model Room {
@@ -38,4 +39,6 @@ model Chat {
   authorId  Int?
   room      Room?    @relation(fields: [roomId], references: [id])
   roomId    Int?
+  touser    User?    @relation("touser", fields: [touserId], references: [id])
+  touserId  Int?
 }

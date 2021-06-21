@@ -1,5 +1,4 @@
 import { gql, useMutation } from "@apollo/client";
-import { error } from "console";
 
 import * as DeleteRoomTypes from "./__generated__/DeleteRoom";
 

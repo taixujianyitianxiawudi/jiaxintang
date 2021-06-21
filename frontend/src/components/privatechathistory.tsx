@@ -3,40 +3,38 @@ import Avatar from "./avatar";
 import Errors from "./errors";
 import Loading from "./loading";
 import * as ChatByRoomIdandUserIdTypes from "./__generated__/ChatByRoomIdandUserId";
-
-const CHAT_BY_ROOM_ID_AND_USER_ID = gql`
-  query ChatByRoomIdandUserId(
-    $chatByRoomIdandUserId: Int
-    $chatByRoomIdandUserUserid: Int
-  ) {
-    chatByRoomIdandUser(
-      id: $chatByRoomIdandUserId
-      userid: $chatByRoomIdandUserUserid
-    ) {
+import * as ChatPrivateTypes from "./__generated__/chatPrivate"
+const CHAT_PRIVATE = gql`
+query chatPrivate($chatPrivateId: Int, $chatPrivateUserid: Int) {
+  chatPrivate(id: $chatPrivateId, userid: $chatPrivateUserid) {
+    id
+    createdAt
+    content
+    author {
+      name
       id
-      createdAt
-      content
-      author {
-        name
-        id
-      }
+    }
+    touser {
+      id
+      name
     }
   }
-`;
-
+}
+`
 interface RoomProps {
   roomId: number;
   userId: number;
 }
 
 const PrivateChatHistory: React.FC<RoomProps> = ({ roomId, userId }) => {
+  const myuserId = parseInt(localStorage.getItem("userId") as string, 10)
   const { data, loading, error } = useQuery<
-    ChatByRoomIdandUserIdTypes.ChatByRoomIdandUserId,
-    ChatByRoomIdandUserIdTypes.ChatByRoomIdandUserIdVariables
-  >(CHAT_BY_ROOM_ID_AND_USER_ID, {
+  ChatPrivateTypes.chatPrivate,
+  ChatPrivateTypes.chatPrivateVariables
+  >(CHAT_PRIVATE, {
     variables: {
-      chatByRoomIdandUserId: roomId,
-      chatByRoomIdandUserUserid: userId,
+      "chatPrivateId": myuserId,
+      "chatPrivateUserid": userId
     },
     pollInterval: 500,
   });
@@ -47,7 +45,7 @@ const PrivateChatHistory: React.FC<RoomProps> = ({ roomId, userId }) => {
     return (
       <div>
         {data &&
-          data.chatByRoomIdandUser.map((chat) => (
+          data.chatPrivate.map((chat) => (
             <Avatar 
               id={chat.author?.id as number} 
               key={chat.id} 

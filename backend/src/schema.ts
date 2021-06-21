@@ -114,6 +114,35 @@ const Query = objectType({
       },
     })
 
+    t.nonNull.list.nonNull.field('chatPrivate', {
+      type: 'Chat',
+      args: {
+        id: intArg(),
+        userid: intArg(),
+      },
+      resolve: (_parent, args, context: Context) => {
+        const userId = getUserId(context)
+        return context.prisma.chat.findMany({
+          where: {
+            OR: [
+              {
+                touserId: userId,
+                authorId: args.userid,
+              },
+              {
+                touserId: args.userid,
+                authorId: userId,
+              },
+            ],
+          },
+          take: -15,
+          orderBy: {
+            createdAt: 'asc',
+          },
+        })
+      },
+    })
+
     t.nullable.field('roomById', {
       type: 'Room',
       args: {
@@ -204,6 +233,28 @@ const Mutation = objectType({
             roomId: args.data.roomId,
             authorId: userId,
             content: args.data.content,
+          },
+        })
+      },
+    })
+
+    t.field('createChatPrivate', {
+      type: 'Chat',
+      args: {
+        data: nonNull(
+          arg({
+            type: 'CreateChatInputPrivate',
+          }),
+        ),
+      },
+      resolve: (_, args, context: Context) => {
+        const userId = getUserId(context)
+        return context.prisma.chat.create({
+          data: {
+            roomId: args.data.roomId,
+            authorId: userId,
+            content: args.data.content,
+            touserId: args.data.touserId,
           },
         })
       },
@@ -308,6 +359,16 @@ const User = objectType({
           .chats()
       },
     })
+    t.nonNull.list.nonNull.field('getchated', {
+      type: 'Chat',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.user
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .getchated()
+      },
+    })
   },
 })
 
@@ -336,6 +397,16 @@ const Chat = objectType({
             where: { id: parent.id || undefined },
           })
           .author()
+      },
+    })
+    t.field('touser', {
+      type: 'User',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.chat
+          .findUnique({
+            where: { id: parent.id || undefined },
+          })
+          .touser()
       },
     })
   },
@@ -404,6 +475,15 @@ const CreateChatInput = inputObjectType({
   },
 })
 
+const CreateChatInputPrivate = inputObjectType({
+  name: 'CreateChatInputPrivate',
+  definition(t) {
+    t.nonNull.int('roomId')
+    t.string('content')
+    t.int('touserId')
+  },
+})
+
 const AuthPayload = objectType({
   name: 'AuthPayload',
   definition(t) {
@@ -423,6 +503,7 @@ const schemaWithoutPermissions = makeSchema({
     UserUniqueInput,
     RoomCreateInput,
     CreateChatInput,
+    CreateChatInputPrivate,
     SortOrder,
     DateTime,
   ],
