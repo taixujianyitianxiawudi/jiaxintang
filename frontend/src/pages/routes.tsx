@@ -13,16 +13,17 @@ const USER_OR_ROOM = gql`
   }
 `;
 
-
-
-
 const Routes: React.FC = () => {
   //const [UserorRoom, setUserorRoom] = useState(UserOrRoom);
   const { data } = useQuery(USER_OR_ROOM);
   return (
     <BrowserRouter>
-      <div>
-        <div>
+      <div className="grid grid-rows-5 grid-flow-col gap-4">
+        <div className="row-span-5">
+          create new room here~
+          <CreateRoom />
+        </div>
+        <div className="row-span-5 col-span-5">
           <Switch>
             <Route path="/chat/public/:roomId/:userId" exact>
               <ChatRoom />
@@ -32,23 +33,27 @@ const Routes: React.FC = () => {
             </Route>
           </Switch>
         </div>
-        <div>{data.UserOrRoom ? <UserList /> : <RoomList />}</div>
-        <button onClick={(e) => {
-          UserOrRoomVar(false);
-          localStorage.setItem("place","false")
-          }}>
-          click me to room list!
-        </button>
-        <button onClick={(e) => {
-          UserOrRoomVar(true);
-          localStorage.setItem("place","true")
-          }}>
-          click me to user list!
-        </button>
-        <div>
-          create new room here~
-          <CreateRoom />
+        <div className="col-span-1 row-span-5">
+          <button
+            onClick={(e) => {
+              UserOrRoomVar(false);
+              localStorage.setItem("place", "false");
+            }}
+          >
+            click me to room list!
+          </button>
+          <button
+            onClick={(e) => {
+              UserOrRoomVar(true);
+              localStorage.setItem("place", "true");
+            }}
+          >
+            click me to user list!
+          </button>
+          <div className="overflow-auto max-h-full max-w-sm">{data.UserOrRoom ? <UserList /> : <RoomList />}</div>
         </div>
+        
+
       </div>
     </BrowserRouter>
   );

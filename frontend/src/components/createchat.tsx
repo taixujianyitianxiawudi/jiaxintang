@@ -1,7 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useRef, useState } from "react";
 import ChatUtils from "./chatutils/chatutils";
-import * as CreateChatTypes from "./__generated__/CreateChat";
 import * as JoinRoombTypes from './__generated__/JoinRoomb'
 import * as LeftRoombTypes from './__generated__/LeftRoomb'
 import * as CreateChatPrivateTypes from './__generated__/CreateChatPrivateMutation'
@@ -60,7 +59,6 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
     if (localStorage.getItem("roomId") === null) {
       joinRoom({variables:{incrementRoomUserId: roomId}})
       localStorage.setItem("roomId", roomId as unknown as string)
-      const newroomId = parseInt(localStorage.getItem("roomId") as string,10)
       createChat({
         variables: {
           createChatPrivateData: {
@@ -89,7 +87,7 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
     if (userId === 999999) userId = undefined
   return (
     <div>
-      <ChatUtils chatRef={chatRef} setChat={setChat} />
+      {(false)?<ChatUtils chatRef={chatRef} setChat={setChat}/>: <div></div> }
       <input
         placeholder="type your message"
         onChange={(e) => setChat(e.target.value)}

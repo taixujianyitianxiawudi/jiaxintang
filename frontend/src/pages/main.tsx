@@ -1,12 +1,15 @@
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Logout from "../components/logout";
+import Develop from "./develop";
 import Profile from "./profile";
 import Routes from "./routes";
+import Welcome from "./welcome";
 
 const Main: React.FC = () => {
   return (
     <BrowserRouter>
-      <div>
+      <div className="max-h-screen static">
+
         <div className="nav-bar flex">
           <div className="nav-item">
             <Link to="/">main</Link>
@@ -28,13 +31,17 @@ const Main: React.FC = () => {
           </div>
 
           <div className="nav-item">
+            <Link to="/develop">develop</Link>
+          </div>
+
+          <div className="nav-item">
             <Logout />
           </div>
         </div>
         <div>
           <Switch>
             <Route exact path="/">
-              <div>welcome page</div>
+              <Welcome />
             </Route>
             <Route path="/profile">
               <Profile />
@@ -47,6 +54,9 @@ const Main: React.FC = () => {
             </Route>
             <Route path="/search">
               <div>search</div>
+            </Route>
+            <Route path="/develop">
+              <Develop />
             </Route>
           </Switch>
         </div>

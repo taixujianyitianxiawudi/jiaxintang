@@ -21,7 +21,7 @@ const CreateRoom: React.FC = () => {
   const nameRef = useRef<HTMLInputElement>(null);
   const detailsRef = useRef<HTMLInputElement>(null);
   return (
-    <div>
+    <div className="flex flex-col">
       <p>Enter Room informations</p>
       <input
         placeholder="name"

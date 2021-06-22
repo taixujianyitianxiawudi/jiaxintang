@@ -1,8 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
+import { useEffect, useRef, useState } from "react";
 import Avatar from "./avatar";
 import Errors from "./errors";
 import Loading from "./loading";
-import * as ChatByRoomIdandUserIdTypes from "./__generated__/ChatByRoomIdandUserId";
 import * as ChatPrivateTypes from "./__generated__/chatPrivate"
 const CHAT_PRIVATE = gql`
 query chatPrivate($chatPrivateId: Int, $chatPrivateUserid: Int) {
@@ -25,6 +25,18 @@ interface RoomProps {
   roomId: number;
   userId: number;
 }
+const SCROLL_DIFF = 200;
+function atBottom(element: HTMLDivElement | null): boolean {
+  // If element is null, assume it is at bottom
+  if (element === null)
+    return true;
+  const top = element.scrollTop;
+  const height = element.clientHeight;
+  const scrollHeight = element.scrollHeight;
+
+  return scrollHeight - (top + height) < SCROLL_DIFF;
+}
+
 
 const PrivateChatHistory: React.FC<RoomProps> = ({ roomId, userId }) => {
   const myuserId = parseInt(localStorage.getItem("userId") as string, 10)
@@ -39,11 +51,42 @@ const PrivateChatHistory: React.FC<RoomProps> = ({ roomId, userId }) => {
     pollInterval: 500,
   });
 
+  const histRef = useRef<HTMLDivElement>(null);
+
+  // Obtain three states to calculate whether page is at bottom
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
+  // Function to compute at bottom state, and set state accordingly
+  const computeBot = () => {
+    // Update state on scroll
+    setIsAtBottom(atBottom(histRef.current));
+  };
+
+  // Function to move to the end
+  const goToScrollEnd = () => {
+    if (histRef.current) {
+      histRef.current.scrollTop = histRef.current.scrollHeight - histRef.current.clientHeight;
+    }
+  };
+
+  // Scroll to the end if after history changes, it is still at the end
+  useEffect(() => {
+    if (atBottom(histRef.current))
+      goToScrollEnd();
+    computeBot();
+  });
+
   if (loading) return <Loading />;
   if (error || data === undefined) return <Errors />;
   if (data) {
     return (
-      <div>
+      <div 
+        className="overflow-auto max-h-full"
+        ref={histRef}
+        onScroll={() => {
+          computeBot();
+        }}
+      >
         {data &&
           data.chatPrivate.map((chat) => (
             <Avatar 

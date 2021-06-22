@@ -77,7 +77,7 @@ const Query = objectType({
       resolve: (_parent, args, context: Context) => {
         return context.prisma.chat.findMany({
           where: { roomId: args.id },
-          take: -15,
+          take: -25,
           orderBy: {
             createdAt: 'asc',
           },
@@ -106,7 +106,7 @@ const Query = objectType({
               },
             ],
           },
-          take: -15,
+          take: -25,
           orderBy: {
             createdAt: 'asc',
           },
@@ -135,7 +135,7 @@ const Query = objectType({
               },
             ],
           },
-          take: -15,
+          take: -25,
           orderBy: {
             createdAt: 'asc',
           },
