@@ -35,6 +35,7 @@ const Routes: React.FC = () => {
         </div>
         <div className="col-span-1 row-span-5">
           <button
+          className="button-primary"
             onClick={(e) => {
               UserOrRoomVar(false);
               localStorage.setItem("place", "false");
@@ -43,6 +44,7 @@ const Routes: React.FC = () => {
             click me to room list!
           </button>
           <button
+          className="button-primary"
             onClick={(e) => {
               UserOrRoomVar(true);
               localStorage.setItem("place", "true");

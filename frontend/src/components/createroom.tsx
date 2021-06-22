@@ -24,18 +24,21 @@ const CreateRoom: React.FC = () => {
     <div className="flex flex-col">
       <p>Enter Room informations</p>
       <input
+        className="py-2 text-sm text-white bg-white rounded-md pl-10 focus:outline-none focus:bg-pink-100 focus:text-gray-900"
         placeholder="name"
         type="text"
         onChange={(e) => setName(e.target.value)}
         ref={nameRef}
       />
       <input
+      className="py-2 text-sm text-white bg-white rounded-md pl-10 focus:outline-none focus:bg-pink-100 focus:text-gray-900"
         placeholder="details"
         type="text"
         onChange={(e) => setDetails(e.target.value)}
         ref={detailsRef}
       />
       <button
+      className="button-primary"
         onClick={() => {
           if (nameRef.current !== null) {
             createRoom({

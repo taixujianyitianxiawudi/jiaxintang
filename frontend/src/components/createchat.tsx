@@ -89,6 +89,7 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
     <div>
       {(false)?<ChatUtils chatRef={chatRef} setChat={setChat}/>: <div></div> }
       <input
+      className="input-primary"
         placeholder="type your message"
         onChange={(e) => setChat(e.target.value)}
         onKeyDown={(e) => {
@@ -114,6 +115,7 @@ const CreateChat: React.FC<InputMessageProps> = ({ roomId, userId}) => {
         ref={chatRef}
       />
       <button
+      className="button-primary"
         onClick={(e) => {
           if (chatRef.current !== null) {
             e.preventDefault()
