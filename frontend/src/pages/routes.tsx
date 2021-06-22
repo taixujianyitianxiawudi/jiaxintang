@@ -52,7 +52,7 @@ const Routes: React.FC = () => {
           >
             click me to user list!
           </button>
-          <div className="overflow-auto max-h-full max-w-sm">{data.UserOrRoom ? <UserList /> : <RoomList />}</div>
+          <div className="overflow-auto max-h-full max-w-sm">{data.UserOrRoom ? <RoomList /> : <UserList /> }</div>
         </div>
         
 
