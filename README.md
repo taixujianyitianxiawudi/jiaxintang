@@ -1,4 +1,4 @@
-# jia xin tang shi fen you yong~
+# 123456
 
 This is a fullstack chat app with Graphql and Typescript
 
